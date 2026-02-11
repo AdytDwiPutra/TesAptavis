@@ -2,18 +2,22 @@
 
 namespace App\Repositories\Contracts;
 
+use App\Models\Task;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 interface TaskRepositoryInterface
 {
-    public function getAll(): Collection;
+    /**
+     * @param int    $projectId
+     * @param array  $filters   
+     */
+    public function getByProject(int $projectId, array $filters = []): Collection;
 
-    public function findById(int $id): Model;
+    public function findById(int $id): Task;
 
-    public function create(array $data): Model;
+    public function create(array $data): Task;
 
-    public function update(int $id, array $data): Model;
+    public function update(int $id, array $data): Task;
 
     public function delete(int $id): bool;
 }

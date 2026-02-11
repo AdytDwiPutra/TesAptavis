@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Task;
 use App\Repositories\Contracts\TaskRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class TaskRepository implements TaskRepositoryInterface
 {
@@ -13,33 +12,54 @@ class TaskRepository implements TaskRepositoryInterface
         protected Task $model
     ) {}
 
-    public function getAll(): Collection
+    public function getByProject(int $projectId, array $filters = []): Collection
     {
-        return $this->model->all();
+        $query = $this->model
+            ->with(['allChildren.dependencies', 'dependencies'])
+            ->where('project_id', $projectId)
+            ->whereNull('parent_id');
+
+        $all = $query->get();
+
+        // Filter
+        if (!empty($filters['status']) || !empty($filters['search'])) {
+        }
+
+        return $all;
     }
 
-    public function findById(int $id): Model
+    public function findById(int $id): Task
     {
-        return $this->model->findOrFail($id);
+        return $this->model
+            ->with(['allChildren', 'dependencies', 'project', 'parent'])
+            ->findOrFail($id);
     }
 
-    public function create(array $data): Model
+    public function create(array $data): Task
     {
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Task
     {
-        $record = $this->model->findOrFail($id);
-        $record->update($data);
+        $task = $this->model->findOrFail($id);
+        $task->update($data);
 
-        return $record->fresh();
+        return $task->fresh(['dependencies', 'children', 'project']);
     }
 
     public function delete(int $id): bool
     {
-        $record = $this->model->findOrFail($id);
+        $task = $this->model->findOrFail($id);
 
-        return $record->delete();
+        return $task->delete();
+    }
+
+    public function getAllByProject(int $projectId): Collection
+    {
+        return $this->model
+            ->where('project_id', $projectId)
+            ->whereNull('parent_id')
+            ->get();
     }
 }

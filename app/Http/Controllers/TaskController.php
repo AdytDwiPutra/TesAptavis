@@ -15,10 +15,6 @@ class TaskController extends Controller
         protected TaskService $taskService,
     ) {}
 
-    /**
-     * GET /projects/{project}/tasks — Daftar task dalam project.
-     * Mendukung query params: ?status=done&search=keyword
-     */
     public function index(Request $request, int $projectId): JsonResponse
     {
         $filters = $request->only(['status', 'search']);
@@ -31,9 +27,6 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * POST /projects/{project}/tasks — Buat task baru.
-     */
     public function store(StoreTaskRequest $request, int $projectId): JsonResponse
     {
         try {
@@ -55,9 +48,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * GET /tasks/{id} — Detail satu task.
-     */
     public function show(int $id): JsonResponse
     {
         try {
@@ -76,9 +66,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * PUT /tasks/{id} — Update task (termasuk ubah status).
-     */
     public function update(UpdateTaskRequest $request, int $id): JsonResponse
     {
         try {
@@ -98,9 +85,6 @@ class TaskController extends Controller
         }
     }
 
-    /**
-     * DELETE /tasks/{id} — Hapus task.
-     */
     public function destroy(int $id): JsonResponse
     {
         try {

@@ -2,38 +2,48 @@
 
 namespace App\Services;
 
+use App\Models\Project;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
+use App\Repositories\Contracts\TaskRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class ProjectService
 {
     public function __construct(
-        protected ProjectRepositoryInterface $repository
+        protected ProjectRepositoryInterface $projectRepo,
     ) {}
 
     public function getAll(): Collection
     {
-        return $this->repository->getAll();
+        return $this->projectRepo->getAll();
     }
 
-    public function findById(int $id): Model
+    public function findById(int $id): Project
     {
-        return $this->repository->findById($id);
+        return $this->projectRepo->findById($id);
     }
 
-    public function create(array $data): Model
+    public function create(array $data): Project
     {
-        return $this->repository->create($data);
+
+        $data['status']               = 'draft';
+        $data['completion_progress']  = 0.00;
+
+        return $this->projectRepo->create($data);
     }
 
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Project
     {
-        return $this->repository->update($id, $data);
+
+        unset($data['status'], $data['completion_progress']);
+
+        return $this->projectRepo->update($id, $data);
     }
 
     public function delete(int $id): bool
     {
-        return $this->repository->delete($id);
+        return $this->projectRepo->delete($id);
     }
+
 }

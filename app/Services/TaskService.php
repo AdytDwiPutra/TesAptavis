@@ -2,38 +2,52 @@
 
 namespace App\Services;
 
+use App\Models\Task;
 use App\Repositories\Contracts\TaskRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class TaskService
 {
     public function __construct(
-        protected TaskRepositoryInterface $repository
+        protected TaskRepositoryInterface $taskRepo,
     ) {}
 
-    public function getAll(): Collection
+    public function getByProject(int $projectId, array $filters = []): Collection
     {
-        return $this->repository->getAll();
+        return $this->taskRepo->getByProject($projectId, $filters);
     }
 
-    public function findById(int $id): Model
+    public function findById(int $id): Task
     {
-        return $this->repository->findById($id);
+        return $this->taskRepo->findById($id);
     }
 
-    public function create(array $data): Model
+    public function create(array $data): Task
     {
-        return $this->repository->create($data);
+        $data['status'] = 'draft';
+
+        $task = $this->taskRepo->create($data);
+
+        return $task;
     }
 
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Task
     {
-        return $this->repository->update($id, $data);
+        $task = $this->taskRepo->findById($id);
+
+        $updated = $this->taskRepo->update($id, $data);
+
+        return $updated;
     }
 
     public function delete(int $id): bool
     {
-        return $this->repository->delete($id);
+        $task      = $this->taskRepo->findById($id);
+
+        $result = $this->taskRepo->delete($id);
+
+        return $result;
     }
+
 }

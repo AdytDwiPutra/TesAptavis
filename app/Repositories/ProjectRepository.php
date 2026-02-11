@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\Project;
 use App\Repositories\Contracts\ProjectRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class ProjectRepository implements ProjectRepositoryInterface
 {
@@ -15,31 +14,62 @@ class ProjectRepository implements ProjectRepositoryInterface
 
     public function getAll(): Collection
     {
-        return $this->model->all();
+        return $this->model
+            ->with([
+                'rootTasks.allChildren',
+                'rootTasks.dependencies',
+                'dependencies',
+            ])
+            ->orderBy('start_date')
+            ->get();
     }
 
-    public function findById(int $id): Model
+    public function findById(int $id): Project
     {
-        return $this->model->findOrFail($id);
+        return $this->model
+            ->with([
+                'rootTasks.allChildren',
+                'rootTasks.dependencies',
+                'dependencies',
+                'dependents',
+            ])
+            ->findOrFail($id);
     }
 
-    public function create(array $data): Model
+    public function create(array $data): Project
     {
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): Model
+    public function update(int $id, array $data): Project
     {
-        $record = $this->model->findOrFail($id);
-        $record->update($data);
+        $project = $this->model->findOrFail($id);
+        $project->update($data);
 
-        return $record->fresh();
+        return $project->fresh([
+            'rootTasks.allChildren',
+            'dependencies',
+        ]);
     }
 
     public function delete(int $id): bool
     {
-        $record = $this->model->findOrFail($id);
+        $project = $this->model->findOrFail($id);
 
-        return $record->delete();
+        return $project->delete();
+    }
+
+    public function findConflictingSchedule(
+        string $startDate,
+        string $endDate,
+        ?int $excludeId = null
+    ): Collection {
+        return $this->model
+            ->when($excludeId, fn($q) => $q->where('id', '!=', $excludeId))
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->where('start_date', '<=', $endDate)
+                      ->where('end_date', '>=', $startDate);
+            })
+            ->get();
     }
 }

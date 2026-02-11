@@ -22,30 +22,16 @@ class Project extends Model
         'completion_progress'  => 'float',
     ];
 
-    // ──────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────
-
-    /**
-     * Task-task langsung milik project ini (bukan subtask).
-     */
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
     }
 
-    /**
-     * Hanya root task (bukan subtask) milik project ini.
-     */
     public function rootTasks(): HasMany
     {
         return $this->hasMany(Task::class)->whereNull('parent_id');
     }
 
-    /**
-     * Project-project yang menjadi dependency dari project ini.
-     * (project ini bergantung PADA project-project ini)
-     */
     public function dependencies(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -56,10 +42,6 @@ class Project extends Model
         );
     }
 
-    /**
-     * Project-project yang bergantung PADA project ini.
-     * (dependents = yang butuh project ini selesai lebih dulu)
-     */
     public function dependents(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -70,13 +52,6 @@ class Project extends Model
         );
     }
 
-    // ──────────────────────────────────────────────
-    // Computed helpers (kalkulasi dilakukan di Service)
-    // ──────────────────────────────────────────────
-
-    /**
-     * Cek apakah semua dependency project sudah Done.
-     */
     public function allDependenciesDone(): bool
     {
         return $this->dependencies()

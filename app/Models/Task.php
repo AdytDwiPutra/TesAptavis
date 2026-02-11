@@ -21,47 +21,27 @@ class Task extends Model
         'bobot' => 'integer',
     ];
 
-    // ──────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────
-
-    /**
-     * Project yang memiliki task ini.
-     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    /**
-     * Task parent (null jika ini root task).
-     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Task::class, 'parent_id');
     }
 
-    /**
-     * Child tasks (subtasks) dari task ini.
-     */
     public function children(): HasMany
     {
         return $this->hasMany(Task::class, 'parent_id');
     }
 
-    /**
-     * Recursive: semua descendant subtasks (eager loading).
-     */
     public function allChildren(): HasMany
     {
         return $this->hasMany(Task::class, 'parent_id')
             ->with('allChildren');
     }
 
-    /**
-     * Task-task yang menjadi dependency dari task ini.
-     * (task ini bergantung PADA task-task ini)
-     */
     public function dependencies(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -72,9 +52,6 @@ class Task extends Model
         );
     }
 
-    /**
-     * Task-task yang bergantung PADA task ini.
-     */
     public function dependents(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -85,21 +62,11 @@ class Task extends Model
         );
     }
 
-    // ──────────────────────────────────────────────
-    // Helpers
-    // ──────────────────────────────────────────────
-
-    /**
-     * Cek apakah task ini adalah root task (bukan subtask).
-     */
     public function isRoot(): bool
     {
         return is_null($this->parent_id);
     }
 
-    /**
-     * Cek apakah semua dependency task sudah Done.
-     */
     public function allDependenciesDone(): bool
     {
         return $this->dependencies()
