@@ -7,411 +7,122 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Project Tracker</title>
 
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
-    
 
     <style>
         :root {
-            --bg: #f0f4f8;
-            --surface: #ffffff;
-            --surface2: #f8fafc;
-            --border: #dde3ec;
-            --border2: #c8d3e0;
-            --blue: #2563eb;
-            --blue-light: #eff6ff;
-            --blue-mid: #3b82f6;
-            --blue-dark: #1e40af;
-            --slate: #475569;
-            --slate-light: #94a3b8;
-            --text: #1e293b;
-            --success: #059669;
-            --success-bg: #ecfdf5;
-            --warning: #d97706;
-            --warning-bg: #fffbeb;
-            --danger: #dc2626;
-            --danger-bg: #fef2f2;
             --font: 'Plus Jakarta Sans', sans-serif;
             --mono: 'JetBrains Mono', monospace;
-            --radius: 10px;
-            --shadow: 0 1px 3px rgba(0, 0, 0, .08), 0 1px 2px rgba(0, 0, 0, .04);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, .08), 0 2px 4px rgba(0, 0, 0, .04);
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            background: var(--bg);
-            color: var(--text);
             font-family: var(--font);
+            background-color: #f8f9fa;
             font-size: 14px;
-            min-height: 100vh;
-            line-height: 1.5;
         }
 
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border2);
-            border-radius: 99px;
-        }
-
+        /* Header */
         .header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 1.5rem;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 30;
-            box-shadow: var(--shadow);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--blue-dark);
-            letter-spacing: -0.02em;
+            background: white;
+            border-bottom: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
         }
 
         .logo-icon {
             width: 30px;
             height: 30px;
-            background: linear-gradient(135deg, var(--blue), var(--blue-mid));
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 0.85rem;
-        }
-
-        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.35rem;
-            padding: 0.45rem 1rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            font-family: var(--font);
-            cursor: pointer;
-            border: none;
-            transition: all 0.15s;
-            white-space: nowrap;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
         }
 
-        .btn-primary {
-            background: var(--blue);
-            color: #fff;
-            box-shadow: 0 1px 3px rgba(37, 99, 235, .3);
-        }
-
-        .btn-primary:hover {
-            background: var(--blue-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: #fff;
-            box-shadow: 0 1px 3px rgba(5, 150, 105, .3);
-        }
-
-        .btn-success:hover {
-            background: #047857;
-            transform: translateY(-1px);
-        }
-
-        .btn-ghost {
-            background: transparent;
-            color: var(--slate);
-            border: 1px solid var(--border2);
-        }
-
-        .btn-ghost:hover {
-            background: var(--surface2);
-            border-color: var(--blue-mid);
-            color: var(--blue);
-        }
-
-        .btn-danger {
-            background: transparent;
-            color: var(--danger);
-            border: 1px solid #fca5a5;
-        }
-
-        .btn-danger:hover {
-            background: var(--danger-bg);
-        }
-
-        .filter-bar {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0.6rem 1.5rem;
-            display: flex;
-            gap: 0.6rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .filter-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--slate-light);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .filter-input,
-        .filter-select {
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.38rem 0.7rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-family: var(--font);
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .filter-input:focus,
-        .filter-select:focus {
-            border-color: var(--blue-mid);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
-        }
-
-        .main {
-            padding: 1.5rem;
-            max-width: 960px;
-            margin: 0 auto;
-        }
-
-        .project-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 1rem;
-            box-shadow: var(--shadow);
-            transition: box-shadow 0.2s, border-color 0.2s;
-        }
-
-        .project-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--border2);
-        }
-
-        .project-header {
-            padding: 1rem 1.25rem;
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .project-meta {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .project-title-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 0.2rem;
-        }
-
-        .project-name {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.01em;
-        }
-
-        .project-dates {
-            font-size: 0.7rem;
-            color: var(--slate-light);
-            font-family: var(--mono);
-            margin-bottom: 0.65rem;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.7rem;
-            color: var(--slate-light);
-            margin-bottom: 0.3rem;
-        }
-
-        .progress-pct {
-            color: var(--blue);
-            font-weight: 600;
-            font-family: var(--mono);
-        }
-
-        .progress-track {
+        /* Progress Bar Custom */
+        .progress {
             height: 6px;
-            background: var(--blue-light);
+            background-color: #eff6ff;
             border-radius: 99px;
-            overflow: hidden;
         }
 
-        .progress-fill {
-            height: 100%;
-            border-radius: 99px;
-            background: linear-gradient(90deg, var(--blue), var(--blue-mid));
-            transition: width 0.5s ease;
+        .progress-bar {
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
         }
 
-        .dep-tags {
-            display: flex;
-            gap: 0.3rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-
-        .dep-tag {
-            font-size: 0.65rem;
-            padding: 0.1rem 0.5rem;
-            border-radius: 99px;
-            background: var(--blue-light);
-            color: var(--blue);
-            border: 1px solid #bfdbfe;
-            font-family: var(--mono);
-        }
-
-        .project-actions {
-            display: flex;
-            gap: 0.4rem;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
-
-        .icon-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 7px;
-            border: 1px solid var(--border);
-            background: var(--surface2);
-            color: var(--slate-light);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            transition: all 0.15s;
-        }
-
-        .icon-btn:hover {
-            border-color: var(--blue-mid);
-            color: var(--blue);
-            background: var(--blue-light);
-        }
-
-        .icon-btn.green:hover {
-            border-color: var(--success);
-            color: var(--success);
-            background: var(--success-bg);
-        }
-
+        /* Badge Custom */
         .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.18rem 0.55rem;
-            border-radius: 99px;
-            font-size: 0.65rem;
+            font-family: var(--mono);
+            font-size: 11px;
             font-weight: 600;
             letter-spacing: 0.03em;
             text-transform: uppercase;
-            font-family: var(--mono);
+            padding: 0.25rem 0.6rem;
         }
 
         .badge-dot {
             width: 5px;
             height: 5px;
             border-radius: 50%;
-            flex-shrink: 0;
+            display: inline-block;
+            margin-right: 4px;
         }
 
         .badge-draft {
-            background: #f1f5f9;
-            color: var(--slate);
-            border: 1px solid var(--border);
+            background-color: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
         }
 
         .badge-draft .badge-dot {
-            background: var(--slate-light);
+            background: #94a3b8;
         }
 
         .badge-in_progress {
-            background: #eff6ff;
-            color: var(--blue);
+            background-color: #eff6ff;
+            color: #2563eb;
             border: 1px solid #bfdbfe;
         }
 
         .badge-in_progress .badge-dot {
-            background: var(--blue-mid);
+            background: #3b82f6;
             animation: pulse 1.5s infinite;
         }
 
         .badge-done {
-            background: var(--success-bg);
-            color: var(--success);
+            background-color: #ecfdf5;
+            color: #059669;
             border: 1px solid #a7f3d0;
         }
 
         .badge-done .badge-dot {
-            background: var(--success);
+            background: #059669;
         }
 
         @keyframes pulse {
 
             0%,
             100% {
-                opacity: 1
+                opacity: 1;
             }
 
             50% {
-                opacity: .35
+                opacity: 0.35;
             }
         }
 
-        .task-list {
-            border-top: 1px solid var(--border);
-            background: var(--surface2);
-        }
-
+        /* Task Row */
         .task-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.5rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.1s;
-            gap: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.15s;
         }
 
         .task-row:last-child {
@@ -419,216 +130,47 @@
         }
 
         .task-row:hover {
-            background: var(--blue-light);
-        }
-
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .task-name {
-            font-size: 0.82rem;
-            color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            background-color: #eff6ff;
         }
 
         .task-bobot {
-            font-size: 0.65rem;
-            color: var(--slate-light);
+            font-size: 11px;
+            color: #94a3b8;
             font-family: var(--mono);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 0.1rem 0.4rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 2px 8px;
             border-radius: 4px;
-            flex-shrink: 0;
         }
 
-        .task-right {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            flex-shrink: 0;
+        /* Dependency Tags */
+        .dep-tag {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 99px;
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            font-family: var(--mono);
+            display: inline-block;
+            margin-right: 4px;
+            margin-bottom: 4px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 4rem 1rem;
-            color: var(--slate-light);
+        /* Offcanvas */
+        .offcanvas {
+            width: 420px !important;
         }
 
-        .empty-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-            opacity: 0.4;
+        @media (max-width: 576px) {
+            .offcanvas {
+                width: 100% !important;
+            }
         }
 
-        .empty-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--slate);
-            margin-bottom: 0.25rem;
-        }
-
-        .empty-sub {
-            font-size: 0.82rem;
-        }
-
-        .task-empty {
-            padding: 0.7rem 1.25rem;
-            font-size: 0.78rem;
-            color: var(--slate-light);
-            font-style: italic;
-        }
-
-        #overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, .35);
-            backdrop-filter: blur(2px);
-            z-index: 40;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.25s;
-        }
-
-        #overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        #slide-panel {
-            position: fixed;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 100%;
-            max-width: 420px;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            box-shadow: -4px 0 24px rgba(0, 0, 0, .1);
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        #slide-panel.open {
-            transform: translateX(0);
-        }
-
-        .panel-header {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface2);
-        }
-
-        .panel-title {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .panel-close {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--slate-light);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            transition: all 0.15s;
-        }
-
-        .panel-close:hover {
-            border-color: var(--danger);
-            color: var(--danger);
-            background: var(--danger-bg);
-        }
-
-        .panel-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.25rem;
-        }
-
-        .panel-footer {
-            padding: 0.9rem 1.25rem;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--surface2);
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--slate);
-            margin-bottom: 0.35rem;
-        }
-
-        .form-control {
-            width: 100%;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.84rem;
-            font-family: var(--font);
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: var(--blue-mid);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
-        }
-
-        .form-hint {
-            font-size: 0.72rem;
-            color: var(--slate-light);
-            margin-top: 0.3rem;
-        }
-
-        .form-error {
-            background: var(--danger-bg);
-            border: 1px solid #fca5a5;
-            color: var(--danger);
-            padding: 0.55rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            margin-top: 0.5rem;
-            display: none;
-        }
-
+        /* Skeleton */
         .skeleton {
-            background: linear-gradient(90deg, var(--border) 25%, #e2e8f0 50%, var(--border) 75%);
+            background: linear-gradient(90deg, #e5e7eb 25%, #e2e8f0 50%, #e5e7eb 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 6px;
@@ -636,228 +178,99 @@
 
         @keyframes shimmer {
             0% {
-                background-position: -200% 0
+                background-position: -200% 0;
             }
 
             100% {
-                background-position: 200% 0
+                background-position: 200% 0;
             }
         }
 
+        /* Spinner for buttons */
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
 
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none !important;
+        .btn-spin {
+            animation: spin 0.7s linear infinite;
         }
 
-        .dep-section {
-            margin-top: 1.25rem;
-            border-top: 1px solid var(--border);
-            padding-top: 1rem;
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f8f9fa;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 99px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Small adjustments */
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 14px;
+            border-color: #e5e7eb;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+        }
+
+        .project-dates {
+            font-size: 12px;
+            color: #94a3b8;
+            font-family: var(--mono);
+        }
+
+        .progress-pct {
+            color: #2563eb;
+            font-weight: 600;
+            font-family: var(--mono);
+            font-size: 12px;
         }
 
         .dep-section-title {
-            font-size: 0.75rem;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--slate);
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .dep-add-row {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .dep-add-row .form-control {
-            flex: 1;
-        }
-
-        .dep-add-row .btn {
-            flex-shrink: 0;
-            padding: .45rem .75rem;
-            font-size: .78rem;
-        }
-
-        .dep-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
         }
 
         .dep-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface2);
-            border: 1px solid var(--border);
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
             border-radius: 8px;
             padding: 0.4rem 0.65rem;
-            font-size: 0.8rem;
+            font-size: 13px;
         }
 
-        .dep-item-name {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .dep-item-arrow {
-            font-size: 0.65rem;
-            color: var(--slate-light);
-            flex-shrink: 0;
-        }
-
-        .dep-remove {
-            width: 22px;
-            height: 22px;
-            border-radius: 5px;
-            border: 1px solid #fca5a5;
-            background: transparent;
-            color: var(--danger);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            flex-shrink: 0;
-            transition: all .15s;
-        }
-
-        .dep-remove:hover {
-            background: var(--danger-bg);
-        }
-
-        .dep-empty {
-            font-size: 0.78rem;
-            color: var(--slate-light);
+        .task-empty {
+            padding: 1rem;
+            font-size: 13px;
+            color: #94a3b8;
             font-style: italic;
             text-align: center;
-            padding: 0.5rem;
-        }
-
-        .dep-section {
-            margin-top: 1.25rem;
-            border-top: 1px solid var(--border);
-            padding-top: 1rem;
-        }
-
-        .dep-section-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--slate);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .dep-add-row {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .dep-add-row .form-control {
-            flex: 1;
-        }
-
-        .dep-add-row .btn {
-            flex-shrink: 0;
-            padding: .45rem .75rem;
-            font-size: .78rem;
-        }
-
-        .dep-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        .dep-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.4rem 0.65rem;
-            font-size: 0.8rem;
-            gap: 0.5rem;
-        }
-
-        .dep-item-name {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .dep-remove {
-            width: 22px;
-            height: 22px;
-            border-radius: 5px;
-            border: 1px solid #fca5a5;
-            background: transparent;
-            color: var(--danger);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            flex-shrink: 0;
-            transition: all .15s;
-        }
-
-        .dep-remove:hover {
-            background: var(--danger-bg);
-        }
-
-        .dep-empty {
-            font-size: 0.78rem;
-            color: var(--slate-light);
-            font-style: italic;
-            padding: 0.4rem 0;
-        }
-
-        .swal2-popup {
-            font-family: var(--font) !important;
-            border-radius: 12px !important;
-        }
-
-        .swal2-confirm {
-            background: var(--blue) !important;
-            font-family: var(--font) !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
-        }
-
-        .swal2-cancel {
-            font-family: var(--font) !important;
-            border-radius: 8px !important;
-            font-weight: 600 !important;
         }
     </style>
 </head>
@@ -865,110 +278,122 @@
 <body>
 
     <!-- Header -->
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon">◈</div>
-            Project Tracker
-        </div>
-        <div style="display:flex;gap:.5rem">
-            <button class="btn btn-primary" id="btn-add-project">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="3">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add Project
-            </button>
-            <button class="btn btn-success" id="btn-add-task">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="3">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add Task
-            </button>
+    <header class="header sticky-top">
+        <div class="container-fluid py-2">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="logo-icon">◈</div>
+                    <h5 class="mb-0 fw-bold text-primary">Project Tracker</h5>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm" id="btn-add-project">
+                        <i class="bi bi-plus-lg"></i> Add Project
+                    </button>
+                    <button class="btn btn-success btn-sm" id="btn-add-task">
+                        <i class="bi bi-plus-lg"></i> Add Task
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Filter Bar -->
-    <div class="filter-bar">
-        <span class="filter-label">Filter:</span>
-        <select id="filter-status" class="filter-select">
-            <option value="">Semua Status</option>
-            <option value="draft">Draft</option>
-            <option value="in_progress">In Progress</option>
-            <option value="done">Done</option>
-        </select>
-        <input id="filter-search" type="text" class="filter-input" placeholder="Cari task..." style="width:210px">
-        <button class="btn btn-ghost" id="btn-clear-filter" style="padding:.38rem .75rem">Reset</button>
+    <div class="bg-white border-bottom py-2">
+        <div class="container-fluid">
+            <div class="row g-2 align-items-center">
+                <div class="col-auto">
+                    <span class="text-uppercase fw-semibold text-muted small">Filter:</span>
+                </div>
+                <div class="col-auto">
+                    <select id="filter-status" class="form-select form-select-sm">
+                        <option value="">Semua Status</option>
+                        <option value="draft">Draft</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="done">Done</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <input id="filter-search" type="text" class="form-control form-control-sm"
+                        placeholder="Cari task..." style="width:210px">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary btn-sm" id="btn-clear-filter">
+                        <i class="bi bi-x-circle"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Main -->
-    <main class="main">
+    <!-- Main Content -->
+    <main class="container py-4" style="max-width: 960px;">
         <div id="projects-container">
+            <!-- Loading Skeleton -->
             <div id="loading-skel">
-                <div class="project-card" style="padding:1.25rem">
-                    <div class="skeleton" style="height:14px;width:38%;margin-bottom:.6rem"></div>
-                    <div class="skeleton" style="height:9px;width:22%;margin-bottom:1rem"></div>
-                    <div class="skeleton" style="height:6px;width:100%"></div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="skeleton mb-2" style="height:14px;width:38%;"></div>
+                        <div class="skeleton mb-3" style="height:9px;width:22%;"></div>
+                        <div class="skeleton" style="height:6px;width:100%;"></div>
+                    </div>
                 </div>
-                <div class="project-card" style="padding:1.25rem">
-                    <div class="skeleton" style="height:14px;width:52%;margin-bottom:.6rem"></div>
-                    <div class="skeleton" style="height:9px;width:28%;margin-bottom:1rem"></div>
-                    <div class="skeleton" style="height:6px;width:100%"></div>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="skeleton mb-2" style="height:14px;width:52%;"></div>
+                        <div class="skeleton mb-3" style="height:9px;width:28%;"></div>
+                        <div class="skeleton" style="height:6px;width:100%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Overlay -->
-    <div id="overlay"></div>
-
-    <!-- Slide Panel -->
-    <div id="slide-panel">
-        <div class="panel-header">
-            <span class="panel-title" id="panel-title">Add Project</span>
-            <button class="panel-close" id="btn-close-panel">✕</button>
+    <!-- Offcanvas Slide Panel -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="slide-panel" data-bs-backdrop="true"
+        data-bs-keyboard="true">
+        <div class="offcanvas-header bg-light border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="panel-title">Add Project</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
 
-        <div class="panel-body">
-
+        <div class="offcanvas-body">
             <!-- Project Form -->
             <form id="project-form" style="display:none" onsubmit="return false">
                 <input type="hidden" id="project-id">
-                <div class="form-group">
+
+                <div class="mb-3">
                     <label class="form-label">Nama Project *</label>
                     <input type="text" id="project-nama" class="form-control" placeholder="Contoh: Website Redesign">
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
                         <label class="form-label">Start Date *</label>
                         <input type="date" id="project-start" class="form-control">
                     </div>
-                    <div class="form-group">
+                    <div class="col-6">
                         <label class="form-label">End Date *</label>
                         <input type="date" id="project-end" class="form-control">
                     </div>
                 </div>
-                <div class="form-error" id="project-error"></div>
 
-                <div class="dep-section" id="project-dep-section" style="display:none">
-                    <div class="dep-section-title">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                        </svg>
-                        Project Dependencies
+                <div class="alert alert-danger d-none align-items-center" id="project-error" role="alert"></div>
+
+                <!-- Project Dependencies -->
+                <div id="project-dep-section" class="border-top pt-3 mt-4" style="display:none">
+                    <div class="dep-section-title mb-3">
+                        <i class="bi bi-link-45deg"></i> Project Dependencies
                     </div>
-                    <div class="dep-add-row">
-                        <select id="proj-dep-select" class="form-control">
+                    <div class="d-flex gap-2 mb-3">
+                        <select id="proj-dep-select" class="form-select form-select-sm flex-grow-1">
                             <option value="">-- Pilih project yang harus selesai dulu --</option>
                         </select>
-                        <button class="btn btn-primary" id="btn-proj-dep-add">+ Tambah</button>
+                        <button class="btn btn-primary btn-sm" id="btn-proj-dep-add">
+                            <i class="bi bi-plus-lg"></i> Tambah
+                        </button>
                     </div>
-                    <div class="dep-list" id="proj-dep-list">
-                        <div class="dep-empty">Belum ada dependency</div>
+                    <div id="proj-dep-list">
+                        <div class="text-muted fst-italic small text-center py-2">Belum ada dependency</div>
                     </div>
                 </div>
             </form>
@@ -976,88 +401,89 @@
             <!-- Task Form -->
             <form id="task-form" style="display:none" onsubmit="return false">
                 <input type="hidden" id="task-id">
-                <div class="form-group">
+
+                <div class="mb-3">
                     <label class="form-label">Project *</label>
-                    <select id="task-project-id" class="form-control">
+                    <select id="task-project-id" class="form-select">
                         <option value="">-- Pilih Project --</option>
                     </select>
                 </div>
-                <div class="form-group">
+
+                <div class="mb-3">
                     <label class="form-label">Parent Task</label>
-                    <select id="task-parent-id" class="form-control">
+                    <select id="task-parent-id" class="form-select">
                         <option value="">-- Root Task (tanpa parent) --</option>
                     </select>
-                    <div class="form-hint">Kosongkan jika ini task utama</div>
+                    <div class="form-text">Kosongkan jika ini task utama</div>
                 </div>
-                <div class="form-group">
+
+                <div class="mb-3">
                     <label class="form-label">Nama Task *</label>
                     <input type="text" id="task-nama" class="form-control" placeholder="Contoh: Setup Database">
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
+
+                <div class="row g-3 mb-3">
+                    <div class="col-6">
                         <label class="form-label">Bobot *</label>
                         <input type="number" id="task-bobot" class="form-control" min="1" value="1">
-                        <div class="form-hint">Untuk kalkulasi progress</div>
+                        <div class="form-text">Untuk kalkulasi progress</div>
                     </div>
-                    <div class="form-group">
+                    <div class="col-6">
                         <label class="form-label">Status</label>
-                        <select id="task-status" class="form-control">
+                        <select id="task-status" class="form-select">
                             <option value="draft">Draft</option>
                             <option value="in_progress">In Progress</option>
                             <option value="done">Done</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-error" id="task-error"></div>
 
-                <div class="dep-section" id="task-dep-section" style="display:none">
-                    <div class="dep-section-title">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2.5">
-                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                        </svg>
-                        Task Dependencies
+                <div class="alert alert-danger d-none align-items-center" id="task-error" role="alert"></div>
+
+                <!-- Task Dependencies -->
+                <div id="task-dep-section" class="border-top pt-3 mt-4" style="display:none">
+                    <div class="dep-section-title mb-3">
+                        <i class="bi bi-link-45deg"></i> Task Dependencies
                     </div>
-                    <div class="dep-add-row">
-                        <select id="task-dep-select" class="form-control">
+                    <div class="d-flex gap-2 mb-3">
+                        <select id="task-dep-select" class="form-select form-select-sm flex-grow-1">
                             <option value="">-- Pilih task yang harus selesai dulu --</option>
                         </select>
-                        <button class="btn btn-primary" id="btn-task-dep-add">+ Tambah</button>
+                        <button class="btn btn-primary btn-sm" id="btn-task-dep-add">
+                            <i class="bi bi-plus-lg"></i> Tambah
+                        </button>
                     </div>
-                    <div class="dep-list" id="task-dep-list">
-                        <div class="dep-empty">Belum ada dependency</div>
+                    <div id="task-dep-list">
+                        <div class="text-muted fst-italic small text-center py-2">Belum ada dependency</div>
                     </div>
                 </div>
             </form>
-
         </div>
 
-        <div class="panel-footer">
-            <button class="btn btn-danger" id="btn-hapus" style="display:none">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2.5">
-                    <polyline points="3,6 5,6 21,6" />
-                    <path d="M19,6l-1,14H6L5,6" />
-                    <path d="M10,11v6M14,11v6" />
-                    <path d="M9,6V4h6v2" />
-                </svg>
-                Hapus
-            </button>
-            <div style="display:flex;gap:.5rem;margin-left:auto">
-                <button class="btn btn-ghost" id="btn-cancel">Batal</button>
-                <button class="btn btn-primary" id="btn-save">Simpan</button>
+        <!-- Footer Actions -->
+        <div class="offcanvas-footer bg-light border-top p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <button class="btn btn-danger btn-sm" id="btn-hapus" style="display:none">
+                    <i class="bi bi-trash"></i> Hapus
+                </button>
+                <div class="ms-auto d-flex gap-2">
+                    <button class="btn btn-secondary btn-sm" id="btn-cancel"
+                        data-bs-dismiss="offcanvas">Batal</button>
+                    <button class="btn btn-primary btn-sm" id="btn-save">Simpan</button>
+                </div>
             </div>
         </div>
     </div>
-    
-    <!-- Scripts -->
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.all.min.js"></script>
 
     <script>
         $(function() {
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
@@ -1067,7 +493,6 @@
             });
 
             const BASE = '{{ url('') }}';
-
             const ROUTES = {
                 projects: {
                     list: '{{ route('projects.list') }}',
@@ -1091,33 +516,28 @@
 
             let projects = [];
             let projectMap = {};
-            let taskMap = {}; 
+            let taskMap = {};
             let panelMode = null;
             let editId = null;
             let forProject = null;
             let searchTimer = null;
+            let bsOffcanvas = null;
 
             const toast = {
                 ok: msg => Swal.fire({
-                    icon: 'success',
-                    title: msg,
-                    showConfirmButton: false,
-                    timer: 1800,
-                    timerProgressBar: true,
+                    title: 'Berhasil!',
+                    text: msg,
+                    icon: 'success'
                 }),
                 err: msg => Swal.fire({
-                    icon: 'error',
                     title: 'Gagal!',
                     text: msg,
-                    confirmButtonText: 'Tutup',
-                    confirmButtonColor: '#2563eb',
+                    icon: 'error'
                 }),
                 warn: msg => Swal.fire({
-                    icon: 'warning',
                     title: 'Perhatian',
                     text: msg,
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#2563eb',
+                    icon: 'warning'
                 }),
             };
 
@@ -1176,11 +596,13 @@
                 const $c = $('#projects-container').empty();
 
                 if (!projects.length) {
-                    $c.html(`<div class="empty-state">
-                <div class="empty-icon">📋</div>
-                <div class="empty-title">Belum ada project</div>
-                <div class="empty-sub">Klik "Add Project" untuk mulai</div>
-            </div>`);
+                    $c.html(`
+                        <div class="text-center py-5">
+                            <div class="display-1 text-muted mb-3">📋</div>
+                            <h4 class="text-muted">Belum ada project</h4>
+                            <p class="text-muted">Klik "Add Project" untuk mulai</p>
+                        </div>
+                    `);
                     return;
                 }
 
@@ -1194,40 +616,40 @@
                     .join('');
 
                 const $card = $(`
-            <div class="project-card" data-id="${p.id}">
-                <div class="project-header">
-                    <div class="project-meta">
-                        <div class="project-title-row">
-                            <span class="project-name">${esc(p.nama)}</span>
-                            ${badge(p.status)}
+                    <div class="card shadow-sm mb-3" data-id="${p.id}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
+                                        <h6 class="mb-0 fw-bold">${esc(p.nama)}</h6>
+                                        ${badge(p.status)}
+                                    </div>
+                                    <div class="project-dates mb-3">
+                                        ${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mb-1 small">
+                                        <span class="text-muted">Completion</span>
+                                        <span class="progress-pct">${pct.toFixed(1)}%</span>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar" style="width:${pct}%"></div>
+                                    </div>
+                                    ${deps ? `<div class="mt-2">${deps}</div>` : ''}
+                                </div>
+                                <div class="d-flex gap-1 ms-2">
+                                    <button class="btn btn-success btn-sm btn-proj-add-task" data-pid="${p.id}" title="Add Task">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-sm btn-proj-edit" data-pid="${p.id}" title="Edit Project">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="project-dates">
-                            ${fmtDate(p.start_date)} → ${fmtDate(p.end_date)}
-                        </div>
-                        <div class="progress-label">
-                            <span>Completion</span>
-                            <span class="progress-pct">${pct.toFixed(1)}%</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width:${pct}%"></div>
-                        </div>
-                        ${deps ? `<div class="dep-tags">${deps}</div>` : ''}
+                        <div class="task-list bg-light"></div>
                     </div>
-                    <div class="project-actions">
-                        <button class="icon-btn green btn-proj-add-task"
-                            data-pid="${p.id}" title="Add Task">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        </button>
-                        <button class="icon-btn btn-proj-edit"
-                            data-pid="${p.id}" title="Edit Project">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="task-list"></div>
-            </div>`);
+                `);
 
-                /* Build task rows */
                 const $tl = $card.find('.task-list');
                 if (p._tasks && p._tasks.length) {
                     p._tasks.forEach(t => makeTaskRow(t, $tl, 0));
@@ -1252,20 +674,19 @@
             function makeTaskRow(t, $container, depth) {
                 const indent = depth * 20;
                 const $row = $(`
-            <div class="task-row" data-tid="${t.id}">
-                <div class="task-left">
-                    <span style="padding-left:${indent}px;flex-shrink:0"></span>
-                    ${depth ? '<span style="color:#cbd5e1;font-size:.7rem;flex-shrink:0">└</span>' : ''}
-                    <span class="task-name">${esc(t.nama)}</span>
-                    ${badge(t.status)}
-                    <span class="task-bobot">w:${t.bobot}</span>
-                </div>
-                <div class="task-right">
-                    <button class="icon-btn btn-task-edit" data-tid="${t.id}" title="Edit Task">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                </div>
-            </div>`);
+                    <div class="task-row d-flex justify-content-between align-items-center p-2" data-tid="${t.id}">
+                        <div class="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                            <span style="padding-left:${indent}px;flex-shrink:0"></span>
+                            ${depth ? '<span class="text-muted small flex-shrink-0">└</span>' : ''}
+                            <span class="text-truncate">${esc(t.nama)}</span>
+                            ${badge(t.status)}
+                            <span class="task-bobot">w:${t.bobot}</span>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm btn-task-edit" data-tid="${t.id}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                `);
 
                 $row.find('.btn-task-edit').on('click', function(e) {
                     e.stopPropagation();
@@ -1274,7 +695,6 @@
                 });
 
                 $container.append($row);
-
                 (t.all_children || []).forEach(c => makeTaskRow(c, $container, depth + 1));
             }
 
@@ -1285,18 +705,17 @@
                     done: 'Done'
                 };
                 return `<span class="badge badge-${status}">
-            <span class="badge-dot"></span>${lbl[status] || status}
-        </span>`;
+                    <span class="badge-dot"></span>${lbl[status] || status}
+                </span>`;
             }
 
-            /* ─── Panel ──────────────────────────────── */
             function openPanel(mode, data = null, projectId = null) {
                 panelMode = mode;
                 editId = data?.id || null;
                 forProject = projectId;
 
                 $('#project-form, #task-form').hide();
-                $('#project-error, #task-error').hide().text('');
+                $('#project-error, #task-error').hide().removeClass('d-none').addClass('d-none');
                 $('#project-dep-section, #task-dep-section').hide();
                 $('#btn-hapus').hide();
 
@@ -1310,7 +729,6 @@
                         $('#project-start').val((data.start_date || '').substring(0, 10));
                         $('#project-end').val((data.end_date || '').substring(0, 10));
                         $('#btn-hapus').show();
-                        // Tampilkan & load dep section hanya saat edit
                         $('#project-dep-section').show();
                         loadProjDeps(data.id);
                     } else {
@@ -1332,7 +750,6 @@
                         $('#task-status').val(data.status);
                         fillParentSelect(data.project_id, data.parent_id);
                         $('#btn-hapus').show();
-                        // Tampilkan & load dep section hanya saat edit
                         $('#task-dep-section').show();
                         loadTaskDeps(data);
                     } else {
@@ -1346,18 +763,20 @@
                     }
                 }
 
-                $('#overlay').addClass('active');
-                $('#slide-panel').addClass('open');
+                if (!bsOffcanvas) {
+                    bsOffcanvas = new bootstrap.Offcanvas(document.getElementById('slide-panel'));
+                }
+                bsOffcanvas.show();
             }
 
             function closePanel() {
-                $('#slide-panel').removeClass('open');
-                $('#overlay').removeClass('active');
+                if (bsOffcanvas) {
+                    bsOffcanvas.hide();
+                }
                 panelMode = editId = forProject = null;
             }
 
-            const SPINNER =
-                `<svg class="btn-spin" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin .7s linear infinite;flex-shrink:0;vertical-align:middle;margin-right:4px"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`;
+            const SPINNER = `<i class="bi bi-arrow-repeat btn-spin me-1"></i>`;
 
             function btnLoading($btn, label) {
                 $btn.prop('disabled', true)
@@ -1391,6 +810,9 @@
                 const $btn = $('#btn-save');
                 const url = isEdit ? ROUTES.projects.update(id) : ROUTES.projects.store;
 
+                // Hide error sebelum submit
+                $('#project-error').addClass('d-none').text('');
+
                 btnLoading($btn);
 
                 api(isEdit ? 'PUT' : 'POST', url, payload)
@@ -1402,7 +824,16 @@
                     })
                     .fail(xhr => {
                         btnReset($btn);
-                        showErr('#project-error', getErrMsg(xhr));
+                        const errMsg = getErrMsg(xhr);
+                        console.log('Error response:', xhr.responseJSON);
+                        console.log('Error message:', errMsg);
+                        showErr('#project-error', errMsg);
+
+                        // Scroll to error
+                        $('#project-error')[0].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
                     });
             }
 
@@ -1423,6 +854,9 @@
                 const $btn = $('#btn-save');
                 const url = isEdit ? ROUTES.tasks.update(id) : ROUTES.projects.tasksStore(projectId);
 
+                // Hide error sebelum submit
+                $('#task-error').addClass('d-none').text('');
+
                 btnLoading($btn);
 
                 api(isEdit ? 'PUT' : 'POST', url, payload)
@@ -1434,7 +868,16 @@
                     })
                     .fail(xhr => {
                         btnReset($btn);
-                        showErr('#task-error', getErrMsg(xhr));
+                        const errMsg = getErrMsg(xhr);
+                        console.log('Error response:', xhr.responseJSON);
+                        console.log('Error message:', errMsg);
+                        showErr('#task-error', errMsg);
+
+                        // Scroll to error
+                        $('#task-error')[0].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
                     });
             }
 
@@ -1477,13 +920,10 @@
                 });
             }
 
-            /* --- Dependency: Project --- */
-
             function loadProjDeps(projectId) {
                 const proj = projectMap[projectId];
                 if (!proj) return;
 
-                // Isi dropdown: semua project kecuali diri sendiri
                 const $sel = $('#proj-dep-select').html(
                     '<option value="">-- Pilih project yang harus selesai dulu --</option>');
                 Object.values(projectMap).forEach(p => {
@@ -1549,10 +989,7 @@
                     });
             });
 
-            /* --- Dependency: Task --- */
-
             function loadTaskDeps(task) {
-                // Isi dropdown: semua task dalam project yang sama, kecuali diri sendiri
                 const $sel = $('#task-dep-select').html(
                     '<option value="">-- Pilih task yang harus selesai dulu --</option>');
                 const projId = task.project_id;
@@ -1561,7 +998,6 @@
                     (res.data || []).forEach(t => addTaskDepOption($sel, t, 0, task.id));
                 });
 
-                // Render list dependency yang sudah ada
                 renderDepList(
                     '#task-dep-list',
                     task.dependencies || [],
@@ -1571,7 +1007,7 @@
 
             function addTaskDepOption($sel, t, depth, excludeId) {
                 if (t.id === excludeId) return;
-                const prefix = '  '.repeat(depth * 2);
+                const prefix = '  '.repeat(depth * 2);
                 $sel.append(`<option value="${t.id}">${prefix}${depth ? '└ ' : ''}${esc(t.nama)}</option>`);
                 (t.all_children || []).forEach(c => addTaskDepOption($sel, c, depth + 1, excludeId));
             }
@@ -1624,23 +1060,26 @@
                     });
             });
 
-            /* --- Render dep list (shared) --- */
             function renderDepList(selector, deps, onRemove) {
                 const $list = $(selector).empty();
                 if (!deps || !deps.length) {
-                    $list.html('<div class="dep-empty">Belum ada dependency</div>');
+                    $list.html(
+                        '<div class="text-muted fst-italic small text-center py-2">Belum ada dependency</div>');
                     return;
                 }
                 deps.forEach(d => {
                     const $item = $(`
-                <div class="dep-item">
-                    <span class="dep-item-name">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;color:var(--blue)"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                        ${esc(d.nama)}
-                    </span>
-                    ${badge(d.status)}
-                    <button class="dep-remove" title="Hapus">✕</button>
-                </div>`);
+                        <div class="dep-item d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center gap-2 flex-grow-1 overflow-hidden">
+                                <i class="bi bi-link-45deg text-primary"></i>
+                                <span class="text-truncate">${esc(d.nama)}</span>
+                                ${badge(d.status)}
+                            </div>
+                            <button class="btn btn-outline-danger btn-sm dep-remove" title="Hapus">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    `);
                     $item.find('.dep-remove').on('click', () => onRemove(d.id));
                     $list.append($item);
                 });
@@ -1671,7 +1110,10 @@
             }
 
             function showErr(sel, msg) {
-                $(sel).text(msg).show();
+                const $el = $(sel);
+                $el.html(`<i class="bi bi-exclamation-triangle-fill me-2"></i>${msg}`)
+                    .removeClass('d-none')
+                    .show();
             }
 
             function getErrMsg(xhr) {
@@ -1697,8 +1139,6 @@
 
             $('#btn-add-project').on('click', () => openPanel('project'));
             $('#btn-add-task').on('click', () => openPanel('task'));
-            $('#btn-close-panel, #btn-cancel').on('click', closePanel);
-            $('#overlay').on('click', closePanel);
             $('#btn-save').on('click', save);
             $('#btn-hapus').on('click', doDelete);
 

@@ -68,13 +68,29 @@ class ProjectService
     {
         $tasks = $this->taskRepo->getAllByProject($projectId);
 
-        $status   = $this->calculateStatus($tasks);
-        $progress = $this->calculateProgress($tasks);
+        $newStatus   = $this->calculateStatus($tasks);
+        $newProgress = $this->calculateProgress($tasks);
 
-        return $this->projectRepo->update($projectId, [
-            'status'               => $status,
-            'completion_progress'  => $progress,
+        // Load project dengan dependencies untuk validasi
+        $project = $this->projectRepo->findById($projectId);
+        $oldStatus = $project->status;
+
+        if ($newStatus !== $oldStatus) {
+            if (in_array($newStatus, ['in_progress', 'done'])) {
+                $this->validateProjectStatusTransition($projectId, $newStatus);
+            }
+        }
+
+        $updated = $this->projectRepo->update($projectId, [
+            'status'               => $newStatus,
+            'completion_progress'  => $newProgress,
         ]);
+
+        if ($newStatus !== $oldStatus) {
+            $this->revalidateDependents($project);
+        }
+
+        return $updated;
     }
 
     private function calculateStatus(Collection $tasks): string
@@ -125,6 +141,7 @@ class ProjectService
     public function removeDependency(int $projectId, int $dependsOnProjectId): void
     {
         $this->projectRepo->removeDependency($projectId, $dependsOnProjectId);
+        $this->recalculate($projectId);
     }
 
     public function validateProjectStatusTransition(int $projectId, string $newStatus): void
@@ -134,12 +151,37 @@ class ProjectService
         }
 
         $project = $this->projectRepo->findById($projectId);
+        $project->loadMissing('dependencies');
 
         if (!$project->allDependenciesDone()) {
+            $blockers = $project->dependencies
+                ->filter(fn($d) => $d->status !== 'done')
+                ->pluck('nama')
+                ->implode(', ');
+
             throw new InvalidArgumentException(
-                'Project tidak dapat berstatus "' . $newStatus . '" ' .
-                'karena masih ada dependency project yang belum selesai (Done).'
+                "Project \"{$project->nama}\" tidak dapat berstatus \"" . ucfirst(str_replace('_', ' ', $newStatus)) . "\". " .
+                    "Project dependency berikut belum selesai: {$blockers}."
             );
+        }
+    }
+
+    private function revalidateDependents(Project $project): void
+    {
+        $project->loadMissing('dependents');
+
+        foreach ($project->dependents as $dependent) {
+            // Jika dependent sudah in_progress/done tapi dependency-nya tidak lagi done
+            if (in_array($dependent->status, ['in_progress', 'done']) && !$dependent->allDependenciesDone()) {
+
+                // Downgrade ke draft karena dependency-nya tidak lagi Done
+                $this->projectRepo->update($dependent->id, [
+                    'status' => 'draft',
+                ]);
+
+                // Rekursif: cek dependents dari dependent ini juga
+                $this->revalidateDependents($dependent->fresh());
+            }
         }
     }
 }

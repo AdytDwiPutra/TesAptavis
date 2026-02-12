@@ -88,20 +88,36 @@ class TaskService
 
         // 2. Simpan
         $this->taskRepo->addDependency($taskId, $dependsOnTaskId);
+
+        $task = $this->taskRepo->findById($taskId);
+        if ($task->status === 'done' && !$task->allDependenciesDone()) {
+            $this->taskRepo->update($taskId, ['status' => 'in_progress']);
+            $this->projectService->recalculate($task->project_id);
+        }
     }
 
     public function removeDependency(int $taskId, int $dependsOnTaskId): void
     {
         $this->taskRepo->removeDependency($taskId, $dependsOnTaskId);
+        $task = $this->taskRepo->findById($taskId);
+        $this->projectService->recalculate($task->project_id);
     }
 
     private function validateStatusTransition(Task $task, string $newStatus): void
     {
-        if ($newStatus !== 'done') {
-            return; // Hanya perpindahan ke Done yang ada constraint
+        // Validasi untuk semua status transition yang memerlukan dependency
+        if (in_array($newStatus, ['in_progress', 'done'])) {
+            $this->validateDependenciesForStatusChange($task, $newStatus);
         }
 
-        // Cek task dependencies
+        // Validasi khusus untuk status Done
+        if ($newStatus === 'done') {
+            $this->validateCanMarkAsDone($task);
+        }
+    }
+
+    private function validateDependenciesForStatusChange(Task $task, string $newStatus): void
+    {
         $task->loadMissing('dependencies');
 
         if (!$task->allDependenciesDone()) {
@@ -111,11 +127,14 @@ class TaskService
                 ->implode(', ');
 
             throw new InvalidArgumentException(
-                "Task tidak dapat berstatus Done. " .
-                "Dependency berikut belum selesai: {$blockers}."
+                "Task \"{$task->nama}\" tidak dapat berstatus \"" . ucfirst(str_replace('_', ' ', $newStatus)) . "\". " .
+                    "Task dependency berikut belum selesai: {$blockers}."
             );
         }
+    }
 
+    private function validateCanMarkAsDone(Task $task): void
+    {
         // Cek subtask — parent tidak boleh Done jika masih ada subtask yang belum Done
         $task->loadMissing('children');
 
@@ -125,20 +144,27 @@ class TaskService
             if ($notDone->isNotEmpty()) {
                 $blockers = $notDone->pluck('nama')->implode(', ');
                 throw new InvalidArgumentException(
-                    "Task tidak dapat berstatus Done. " .
-                    "Subtask berikut belum selesai: {$blockers}."
+                    "Task \"{$task->nama}\" tidak dapat berstatus Done. " .
+                        "Subtask berikut belum selesai: {$blockers}."
                 );
             }
         }
 
-        // Cek project dependency (via ProjectService)
-        $this->projectService->validateProjectStatusTransition(
-            $task->project_id,
-            'done'
-        );
+        try {
+            $this->projectService->validateProjectStatusTransition(
+                $task->project_id,
+                'done'
+            );
+        } catch (InvalidArgumentException $e) {
+            throw new InvalidArgumentException(
+                "Task \"{$task->nama}\" tidak dapat berstatus Done karena: " . $e->getMessage()
+            );
+        }
     }
 
     /**
+     * Validasi bobot subtask tidak melebihi parent
+     * 
      * @param int $parentId    
      * @param int $bobot      
      * @param int|null $selfId 
@@ -166,8 +192,8 @@ class TaskService
         if ($remaining <= 0) {
             throw new InvalidArgumentException(
                 "Tidak dapat menambahkan subtask baru. " .
-                "Total bobot subtask pada \"{$parent->nama}\" sudah penuh " .
-                "({$totalSibling}/{$parent->bobot})."
+                    "Total bobot subtask pada \"{$parent->nama}\" sudah penuh " .
+                    "({$totalSibling}/{$parent->bobot})."
             );
         }
 
@@ -175,7 +201,7 @@ class TaskService
         if (($totalSibling + $bobot) > $parent->bobot) {
             throw new InvalidArgumentException(
                 "Bobot subtask ({$bobot}) melebihi sisa bobot yang tersedia pada \"{$parent->nama}\". " .
-                "Sisa bobot: {$remaining} (total parent: {$parent->bobot}, terpakai: {$totalSibling})."
+                    "Sisa bobot: {$remaining} (total parent: {$parent->bobot}, terpakai: {$totalSibling})."
             );
         }
     }
