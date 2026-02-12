@@ -23,6 +23,7 @@ class TaskRepository implements TaskRepositoryInterface
 
         // Filter
         if (!empty($filters['status']) || !empty($filters['search'])) {
+            $all = $this->applyHierarchicalFilters($all, $filters);
         }
 
         return $all;
@@ -55,11 +56,86 @@ class TaskRepository implements TaskRepositoryInterface
         return $task->delete();
     }
 
+    public function addDependency(int $taskId, int $dependsOnTaskId): void
+    {
+        $task = $this->model->findOrFail($taskId);
+        $task->dependencies()->syncWithoutDetaching([$dependsOnTaskId]);
+    }
+
+    public function removeDependency(int $taskId, int $dependsOnTaskId): void
+    {
+        $task = $this->model->findOrFail($taskId);
+        $task->dependencies()->detach($dependsOnTaskId);
+    }
+
     public function getAllByProject(int $projectId): Collection
     {
         return $this->model
             ->where('project_id', $projectId)
             ->whereNull('parent_id')
             ->get();
+    }
+
+    public function getDependencyIds(int $taskId): array
+    {
+        $task = $this->model->findOrFail($taskId);
+
+        return $task->dependencies()->pluck('tasks.id')->toArray();
+    }
+
+    private function applyHierarchicalFilters(Collection $rootTasks, array $filters): Collection
+    {
+        return $rootTasks->filter(function (Task $task) use ($filters) {
+            return $this->taskOrDescendantMatches($task, $filters);
+        })->values();
+    }
+
+    private function taskOrDescendantMatches(Task $task, array $filters): bool
+    {
+        if ($this->taskMatchesFilters($task, $filters)) {
+            // Filter children
+            $task->setRelation(
+                'allChildren',
+                $this->filterChildrenRecursive($task->allChildren, $filters)
+            );
+            return true;
+        }
+
+        // Cek subtask-nya
+        $matchingChildren = $this->filterChildrenRecursive($task->allChildren, $filters);
+
+        if ($matchingChildren->isNotEmpty()) {
+            $task->setRelation('allChildren', $matchingChildren);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function filterChildrenRecursive(Collection $children, array $filters): Collection
+    {
+        return $children->filter(function (Task $child) use ($filters) {
+            return $this->taskOrDescendantMatches($child, $filters);
+        })->values();
+    }
+
+    private function taskMatchesFilters(Task $task, array $filters): bool
+    {
+        // Filter by status
+        if (!empty($filters['status'])) {
+            if ($task->status !== $filters['status']) {
+                return false;
+            }
+        }
+
+        // Filter by search (nama)
+        if (!empty($filters['search'])) {
+            $keyword = strtolower($filters['search']);
+            if (!str_contains(strtolower($task->nama), $keyword)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

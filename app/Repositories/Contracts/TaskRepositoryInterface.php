@@ -20,4 +20,12 @@ interface TaskRepositoryInterface
     public function update(int $id, array $data): Task;
 
     public function delete(int $id): bool;
+
+    public function addDependency(int $taskId, int $dependsOnTaskId): void;
+
+    public function removeDependency(int $taskId, int $dependsOnTaskId): void;
+
+    public function getAllByProject(int $projectId): Collection;
+
+    public function getDependencyIds(int $taskId): array;
 }

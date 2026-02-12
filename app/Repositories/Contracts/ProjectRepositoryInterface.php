@@ -16,4 +16,22 @@ interface ProjectRepositoryInterface
     public function update(int $id, array $data): Project;
 
     public function delete(int $id): bool;
+
+    /**
+     * @param string $startDate
+     * @param string $endDate
+     * @param int|null $excludeId
+     * @return Collection
+     */
+    public function findConflictingSchedule(
+        string $startDate,
+        string $endDate,
+        ?int $excludeId = null
+    ): Collection;
+
+    public function addDependency(int $projectId, int $dependsOnProjectId): void;
+
+    public function removeDependency(int $projectId, int $dependsOnProjectId): void;
+
+    public function getDependencyIds(int $projectId): array;
 }

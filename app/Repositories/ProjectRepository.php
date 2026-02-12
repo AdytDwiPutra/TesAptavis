@@ -72,4 +72,23 @@ class ProjectRepository implements ProjectRepositoryInterface
             })
             ->get();
     }
+
+    public function addDependency(int $projectId, int $dependsOnProjectId): void
+    {
+        $project = $this->model->findOrFail($projectId);
+        $project->dependencies()->syncWithoutDetaching([$dependsOnProjectId]);
+    }
+
+    public function removeDependency(int $projectId, int $dependsOnProjectId): void
+    {
+        $project = $this->model->findOrFail($projectId);
+        $project->dependencies()->detach($dependsOnProjectId);
+    }
+
+    public function getDependencyIds(int $projectId): array
+    {
+        $project = $this->model->findOrFail($projectId);
+
+        return $project->dependencies()->pluck('projects.id')->toArray();
+    }
 }
