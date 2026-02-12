@@ -21,7 +21,10 @@ cp .env.example .env
 # 4. Generate application key
 php artisan key:generate
 
-# 5. Konfigurasi database di .env
+# 5. Download vendor
+npm install
+
+# 6. Konfigurasi database di .env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -29,7 +32,7 @@ DB_DATABASE=project_tracker
 DB_USERNAME=root
 DB_PASSWORD=
 
-# 6. Jalankan migrasi
+# 7. Jalankan migrasi
 php artisan migrate
 
 # 8. Jalankan server
